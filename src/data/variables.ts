@@ -82,8 +82,63 @@ export interface VariableDefinition {
  */
 export const variableDefinitions: Record<string, VariableDefinition> = {
     // ========================================
-    // ADD YOUR VARIABLES HERE
+    // SECTION: The Constant Behind y = k/x
     // ========================================
+
+    /** The constant k — the distance of the journey, in km. */
+    inverseConstant: {
+        defaultValue: 120,
+        type: 'number',
+        label: 'Journey distance',
+        description: 'The constant k in y = k/x, shown as the distance of the drive in km',
+        unit: 'km',
+        min: 60,
+        max: 300,
+        step: 30,
+        color: '#62D0AD',
+    },
+
+    /** Shared highlight channel for the curve figure: '' | 'current' | 'ghosts'. */
+    inverseCurveHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Curve highlight',
+        description: 'Which curve group is currently highlighted in the family-of-curves figure',
+        color: '#3EAE8C',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
+    },
+
+    /** Chip colours only — spread onto the ghost phrase, which writes inverseCurveHighlight. */
+    inverseGhostHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Ghost curve highlight chip',
+        description: 'Slate chip colours for the prose phrase that highlights the ghost curves',
+        color: '#64748B',
+        bgColor: 'rgba(100, 116, 139, 0.16)',
+    },
+
+    /** Assessment: the constant of a 15 km/h, 4 hour ride. */
+    answer_constant_product: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Constant from speed and time',
+        description: 'Student answer for the constant of a 15 km/h ride lasting 4 hours',
+        placeholder: '???',
+        correctAnswer: ['60', '60 km'],
+        color: '#8E90F5',
+    },
+
+    /** Assessment: time for a 60 km journey at 20 km/h. */
+    answer_constant_time: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Time at 20 km/h',
+        description: 'Student answer for the time a 60 km journey takes at 20 km/h',
+        placeholder: '???',
+        correctAnswer: ['3', '3 h', '3 hours'],
+        color: '#8E90F5',
+    },
 
     // Uncomment and modify these examples for your lesson:
 
