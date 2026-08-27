@@ -92,7 +92,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         label: 'Journey distance',
         description: 'The constant k in y = k/x, shown as the distance of the drive in km',
         unit: 'km',
-        min: 60,
+        min: 0,
         max: 300,
         step: 30,
         color: '#62D0AD',

@@ -35,7 +35,7 @@ const SPEED_MAX = 120;
 const TIME_MIN = 0; // hours
 const TIME_MAX = 6;
 
-const K_MIN = 60;
+const K_MIN = 0;
 const K_MAX = 300;
 const K_STEP = 30;
 const K_DEFAULT = 120;
