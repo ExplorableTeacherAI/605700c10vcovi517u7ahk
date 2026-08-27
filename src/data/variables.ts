@@ -236,6 +236,18 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         color: '#8E90F5',
     },
 
+    /** Stepped working, step 1: which calculation gives the constant. */
+    answer_constant_operation: {
+        defaultValue: '',
+        type: 'select',
+        label: 'Which calculation',
+        description: 'Student answer for the calculation that finds the constant of the ride',
+        placeholder: 'pick the calculation',
+        options: ['15 × 4', '15 ÷ 4', '4 ÷ 15', '15 + 4'],
+        correctAnswer: '15 × 4',
+        color: '#8E90F5',
+    },
+
     /** Assessment: the constant of a 15 km/h, 4 hour ride. */
     answer_constant_product: {
         defaultValue: '',

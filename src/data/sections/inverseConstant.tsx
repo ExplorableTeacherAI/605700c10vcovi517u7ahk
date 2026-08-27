@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState, type ReactElement } from "react";
 import { Block } from "@/components/templates";
-import { StackLayout } from "@/components/layouts";
+import { StackLayout, Step, StepLayout } from "@/components/layouts";
 import {
     EditableH2,
     EditableParagraph,
+    InlineClozeChoice,
     InlineClozeInput,
     InlineFeedback,
     InlineLinkedHighlight,
@@ -16,6 +17,7 @@ import { useVar, useSetVar } from "@/stores";
 import { clamp, remap, useSpring } from "@/lib/motion";
 import {
     getVariableInfo,
+    choicePropsFromDefinition,
     clozePropsFromDefinition,
     linkedHighlightPropsFromDefinition,
     numberPropsFromDefinition,
@@ -438,67 +440,94 @@ export const inverseConstantBlocks: ReactElement[] = [
         </Block>
     </StackLayout>,
 
-    <StackLayout key="layout-constant-question-product" maxWidth="xl">
-        <Block id="constant-question-product" padding="md">
-            <EditableParagraph id="para-constant-question-product" blockId="constant-question-product">
-                A cyclist rides at a steady 15 km/h for 4 hours. The constant for that ride, the
-                distance covered, is{" "}
-                <InlineFeedback
-                    varName="answer_constant_product"
-                    correctValue={["60", "60 km"]}
-                    position="terminal"
-                    successMessage="— exactly, 15 × 4 = 60, so every speed and time on that ride multiplies back to 60"
-                    failureMessage="— not quite."
-                    hint="Multiply the speed by the time, just as 40 × 3 gave us 120"
-                >
-                    <InlineClozeInput
-                        varName="answer_constant_product"
-                        correctAnswer={["60", "60 km"]}
-                        {...clozePropsFromDefinition(getVariableInfo("answer_constant_product"))}
-                    />
-                </InlineFeedback>
-                {" "}km.
-            </EditableParagraph>
-        </Block>
-    </StackLayout>,
+    <StepLayout key="layout-constant-question-product" showProgress={false}>
+        <Step completionVarName="answer_constant_operation" autoAdvance>
+            <Block id="constant-question-operation" padding="md">
+                <EditableParagraph id="para-constant-question-operation" blockId="constant-question-operation">
+                    A cyclist rides at a steady 15 km/h for 4 hours. To find the constant of that
+                    ride, the calculation you need is{" "}
+                    <InlineFeedback
+                        varName="answer_constant_operation"
+                        correctValue="15 × 4"
+                        position="terminal"
+                        successMessage="— yes, the constant of an inverse pair is always the two values multiplied"
+                        failureMessage="— not that one."
+                        hint="Speed and time multiply back to the distance, they are not divided"
+                    >
+                        <InlineClozeChoice
+                            varName="answer_constant_operation"
+                            correctAnswer="15 × 4"
+                            options={["15 × 4", "15 ÷ 4", "4 ÷ 15", "15 + 4"]}
+                            {...choicePropsFromDefinition(getVariableInfo("answer_constant_operation"))}
+                        />
+                    </InlineFeedback>
+                    .
+                </EditableParagraph>
+            </Block>
+        </Step>
 
-    <StackLayout key="layout-constant-question-time" maxWidth="xl">
-        <Block id="constant-question-time" padding="md">
-            <EditableParagraph id="para-constant-question-time" blockId="constant-question-time">
-                Staying with that 60 km ride, at 20 km/h it would take{" "}
-                <InlineFeedback
-                    varName="answer_constant_time"
-                    correctValue={["3", "3 h", "3 hours"]}
-                    position="terminal"
-                    successMessage="— right, 20 × 3 = 60, so the pair still multiplies back to the constant"
-                    failureMessage="— almost."
-                    hint="You need the time that turns 20 into 60 when you multiply"
-                    visualizationHint={{
-                        blockId: "constant-visual",
-                        hintKey: "constant-visual-find-sixty",
-                        label: "Discover it yourself",
-                        resetVars: { inverseConstant: 120 },
-                        steps: [
-                            {
-                                gesture: "drag-vertical",
-                                label: "Drag the teal handle down until the distance reads 60 km, then follow the curve left to 20 km/h",
-                                position: { x: "48%", y: "55%" },
-                                dragPath: { type: "line", startOffset: { x: 0, y: -20 }, endOffset: { x: 0, y: 20 } },
-                                completionVar: "inverseConstant",
-                                completionValue: 60,
-                                completionTolerance: 15,
-                            },
-                        ],
-                    }}
-                >
-                    <InlineClozeInput
+        <Step completionVarName="answer_constant_product" autoAdvance>
+            <Block id="constant-question-product" padding="md">
+                <EditableParagraph id="para-constant-question-product" blockId="constant-question-product">
+                    Carry it out. The constant for that ride, the distance covered, is{" "}
+                    <InlineFeedback
+                        varName="answer_constant_product"
+                        correctValue={["60", "60 km"]}
+                        position="terminal"
+                        successMessage="— exactly, 15 × 4 = 60, so every speed and time on that ride multiplies back to 60"
+                        failureMessage="— not quite."
+                        hint="Fifteen kilometres every hour, for four hours"
+                    >
+                        <InlineClozeInput
+                            varName="answer_constant_product"
+                            correctAnswer={["60", "60 km"]}
+                            {...clozePropsFromDefinition(getVariableInfo("answer_constant_product"))}
+                        />
+                    </InlineFeedback>
+                    {" "}km.
+                </EditableParagraph>
+            </Block>
+        </Step>
+
+        <Step>
+            <Block id="constant-question-time" padding="md">
+                <EditableParagraph id="para-constant-question-time" blockId="constant-question-time">
+                    Now put that constant to work. Riding the same 60 km route at 20 km/h would take{" "}
+                    <InlineFeedback
                         varName="answer_constant_time"
-                        correctAnswer={["3", "3 h", "3 hours"]}
-                        {...clozePropsFromDefinition(getVariableInfo("answer_constant_time"))}
-                    />
-                </InlineFeedback>
-                {" "}hours.
-            </EditableParagraph>
-        </Block>
-    </StackLayout>,
+                        correctValue={["3", "3 h", "3 hours"]}
+                        position="terminal"
+                        successMessage="— right, 20 × 3 = 60, the same constant reached from the other direction"
+                        failureMessage="— almost."
+                        hint="You need the time that turns 20 into 60 when you multiply"
+                        visualizationHint={{
+                            blockId: "constant-visual",
+                            hintKey: "constant-visual-find-sixty",
+                            label: "Discover it yourself",
+                            resetVars: { inverseConstant: 120 },
+                            steps: [
+                                {
+                                    gesture: "drag-vertical",
+                                    label: "Drag the teal handle down until the distance reads 60 km, then follow the curve left to 20 km/h",
+                                    position: { x: "48%", y: "55%" },
+                                    dragPath: { type: "line", startOffset: { x: 0, y: -20 }, endOffset: { x: 0, y: 20 } },
+                                    completionVar: "inverseConstant",
+                                    completionValue: 60,
+                                    completionTolerance: 15,
+                                },
+                            ],
+                        }}
+                    >
+                        <InlineClozeInput
+                            varName="answer_constant_time"
+                            correctAnswer={["3", "3 h", "3 hours"]}
+                            {...clozePropsFromDefinition(getVariableInfo("answer_constant_time"))}
+                        />
+                    </InlineFeedback>
+                    {" "}hours.
+                </EditableParagraph>
+            </Block>
+        </Step>
+    </StepLayout>,
+
 ];
