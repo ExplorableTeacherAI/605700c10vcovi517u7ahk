@@ -8,6 +8,7 @@ import {
     InlineFeedback,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
+    InlineTooltip,
     InteractionHintSequence,
 } from "@/components/atoms";
 import { Figure, FigureSlider, FormulaBlock } from "@/components/molecules";
@@ -409,6 +410,30 @@ export const inverseConstantBlocks: ReactElement[] = [
                     ghost
                 </InlineLinkedHighlight>
                 {" "}behind it. It never straightens, and it never quite touches either axis.
+            </EditableParagraph>
+        </Block>
+    </StackLayout>,
+
+    <StackLayout key="layout-block-1787814737319" maxWidth="xl">
+        <Block id="block-1787814737319" padding="sm">
+            <EditableParagraph id="para-block-1787814737319" blockId="block-1787814737319">
+                A straight line keeps one steepness the whole way along. This shape does not: it
+                plunges near the left, then eases off almost flat, and that changing steepness is
+                what makes it a{" "}
+                <InlineTooltip
+                    id="tooltip-curve-definition"
+                    tooltip="A graph whose steepness keeps changing, so no part of it is ever straight."
+                >
+                    curve
+                </InlineTooltip>
+                . This particular one is a{" "}
+                <InlineTooltip
+                    id="tooltip-hyperbola-definition"
+                    tooltip="The curve you get from y = k/x. It sweeps towards both axes forever without ever touching either one."
+                >
+                    hyperbola
+                </InlineTooltip>
+                .
             </EditableParagraph>
         </Block>
     </StackLayout>,
