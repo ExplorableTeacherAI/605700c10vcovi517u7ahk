@@ -176,7 +176,7 @@ function GraphsDrawing() {
 
                     {/* The visible tie: one x, read by both graphs. */}
                     <line x1={aX(x)} y1={A_TOP} x2={aX(x)} y2={A_BOTTOM} stroke={INK_STRUCTURE} strokeWidth="1.5" strokeDasharray="4 4" />
-                    <text x={aX(x)} y={A_TOP - 16} textAnchor="middle" fontSize="12" fill={INK} style={{ fontVariantNumeric: "tabular-nums" }}>
+                    <text x={A_RIGHT} y={A_TOP - 16} textAnchor="end" fontSize="12" fill={INK} style={{ fontVariantNumeric: "tabular-nums" }}>
                         {`x = ${fmt(x)}`}
                     </text>
                 </g>
@@ -219,7 +219,7 @@ function GraphsDrawing() {
                         <path d={linePath()} fill="none" stroke={LINE_COLOR} strokeWidth="9" opacity={0.28} strokeLinecap="round" />
                     )}
                     <path d={linePath()} fill="none" stroke={LINE_COLOR} strokeWidth={weight("line", 3)} strokeLinecap="round" />
-                    <text x={A_RIGHT - 6} y={A_TOP - 2} textAnchor="end" fontSize="12" fill={LINE_COLOR}>
+                    <text x={aX(1.5) - 10} y={aY(3) - 8} textAnchor="end" fontSize="12" fill={LINE_COLOR}>
                         y = 2x
                     </text>
                 </g>
@@ -230,7 +230,7 @@ function GraphsDrawing() {
                         <path d={curveSvgPath()} fill="none" stroke={CURVE_COLOR} strokeWidth="9" opacity={0.28} strokeLinecap="round" />
                     )}
                     <path d={curveSvgPath()} fill="none" stroke={CURVE_COLOR} strokeWidth={weight("curve", 3)} strokeLinecap="round" />
-                    <text x={A_RIGHT - 6} y={aY(curveY(AXIS_X_MAX)) - 14} textAnchor="end" fontSize="12" fill={CURVE_COLOR}>
+                    <text x={aX(2.4)} y={aY(curveY(2.4)) + 22} textAnchor="middle" fontSize="12" fill={CURVE_COLOR}>
                         y = 2/x
                     </text>
                 </g>
@@ -504,6 +504,7 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
                 <InlineScrubbleNumber
                     varName="contrastX"
                     {...numberPropsFromDefinition(getVariableInfo("contrastX"))}
+                    formatValue={fmt}
                 />
                 ,{" "}
                 <InlineLinkedHighlight
