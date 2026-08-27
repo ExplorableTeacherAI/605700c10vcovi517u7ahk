@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, type ReactElement } from "react";
+import React, { useRef, useState, type ReactElement } from "react";
 import { Block } from "@/components/templates";
 import { SplitLayout, StackLayout } from "@/components/layouts";
 import {
