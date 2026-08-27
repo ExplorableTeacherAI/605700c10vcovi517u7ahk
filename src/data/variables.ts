@@ -118,6 +118,65 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         bgColor: 'rgba(100, 116, 139, 0.16)',
     },
 
+    // ========================================
+    // SECTION: When x Doubles
+    // ========================================
+
+    /** The x of the first dot in the chain; each dot after it doubles x again. */
+    doublingStartX: {
+        defaultValue: 4,
+        type: 'number',
+        label: 'First dot',
+        description: 'The x value of the first dot in the doubling chain (k is fixed at 120)',
+        min: 3,
+        max: 6,
+        step: 0.5,
+        color: '#62D0AD',
+    },
+
+    /** Shared highlight channel for the chain figure: '' | 'fractions' | 'subtractions'. */
+    doublingHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Chain highlight',
+        description: 'Which set of bracket labels is highlighted in the doubling-chain figure',
+        color: '#3EAE8C',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
+    },
+
+    /** Chip colours only — spread onto the subtraction phrase, which writes doublingHighlight. */
+    doublingSubtractionHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Subtraction label highlight chip',
+        description: 'Slate chip colours for the prose phrase that highlights the subtraction labels',
+        color: '#64748B',
+        bgColor: 'rgba(100, 116, 139, 0.16)',
+    },
+
+    /** Assessment: y after doubling x, on a journey with k = 36. */
+    answer_doubling_halved: {
+        defaultValue: '',
+        type: 'text',
+        label: 'y after doubling x',
+        description: 'Student answer for y when x doubles from 3 to 6 with k = 36',
+        placeholder: '???',
+        correctAnswer: '6',
+        color: '#8E90F5',
+    },
+
+    /** Assessment: what tripling x does to y. */
+    answer_doubling_tripled: {
+        defaultValue: '',
+        type: 'select',
+        label: 'Effect of tripling x',
+        description: 'Student answer for what happens to y when x is tripled',
+        placeholder: '???',
+        options: ['a third of it', 'half of it', 'two thirds of it', 'three times it'],
+        correctAnswer: 'a third of it',
+        color: '#8E90F5',
+    },
+
     /** Assessment: the constant of a 15 km/h, 4 hour ride. */
     answer_constant_product: {
         defaultValue: '',
