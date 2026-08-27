@@ -242,7 +242,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         type: 'text',
         label: 'Constant from speed and time',
         description: 'Student answer for the constant of a 15 km/h ride lasting 4 hours',
-        placeholder: '???',
+        placeholder: 'work out the value',
         correctAnswer: ['60', '60 km'],
         color: '#8E90F5',
     },
