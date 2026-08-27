@@ -386,30 +386,7 @@ export const inverseConstantBlocks: ReactElement[] = [
 
     <StackLayout key="layout-constant-different-journey" maxWidth="xl">
         <Block id="constant-different-journey" padding="sm">
-            <EditableParagraph id="para-constant-different-journey" blockId="constant-different-journey">
-                The shape never changed, only its distance from the corner. With the drive set at{" "}
-                <InlineScrubbleNumber
-                    varName="inverseConstant"
-                    {...numberPropsFromDefinition(getVariableInfo("inverseConstant"))}
-                />
-                {" "}km, a steady 60 km/h gets you there in <DriveTimeAtSixty /> hours, and the{" "}
-                <InlineLinkedHighlight
-                    varName="inverseCurveHighlight"
-                    highlightId="current"
-                    {...linkedHighlightPropsFromDefinition(getVariableInfo("inverseCurveHighlight"))}
-                >
-                    curve you are holding
-                </InlineLinkedHighlight>
-                {" "}sits further out than every{" "}
-                <InlineLinkedHighlight
-                    varName="inverseCurveHighlight"
-                    highlightId="ghosts"
-                    {...linkedHighlightPropsFromDefinition(getVariableInfo("inverseGhostHighlight"))}
-                >
-                    ghost
-                </InlineLinkedHighlight>
-                {" "}behind it. It never straightens, and it never quite touches either axis.
-            </EditableParagraph>
+            <EditableParagraph id="para-constant-different-journey" blockId="constant-different-journey">The shape never changed, only its distance from the corner. With the drive set at <InlineScrubbleNumber varName={"inverseConstant"} defaultValue={120} min={0} max={300} step={30} color={"#62D0AD"} id={"scrubble-1787813859882-dfp1m"} /> km, a steady 60 km/h gets you there in 2.0 hours, and the <InlineLinkedHighlight varName={"inverseCurveHighlight"} highlightId={"current"} color={"#3EAE8C"} bgColor={"rgba(98, 208, 173, 0.22)"} id={"linkedHighlight-1787813859883-l6bp6"}>curve you are holding</InlineLinkedHighlight> sits further out than every <InlineLinkedHighlight varName={"inverseCurveHighlight"} highlightId={"ghosts"} color={"#64748B"} bgColor={"rgba(100, 116, 139, 0.16)"} id={"linkedHighlight-1787813859884-16bna"}>ghost</InlineLinkedHighlight> behind it. It never straightens, and it never quite touches either axis.</EditableParagraph>
         </Block>
     </StackLayout>,
 

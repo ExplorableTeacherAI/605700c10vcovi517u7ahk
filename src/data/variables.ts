@@ -119,6 +119,65 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
     },
 
     // ========================================
+    // SECTION: Straight Line or Curve (linked pair)
+    // ========================================
+
+    /** The shared x of both dots — the ONE variable that links the two views. */
+    contrastX: {
+        defaultValue: 2,
+        type: 'number',
+        label: 'Shared x',
+        description: 'The x at which both the straight line and the curve are read (k is fixed at 2)',
+        min: 0.5,
+        max: 3,
+        step: 0.1,
+        color: '#64748B',
+    },
+
+    /** Shared highlight channel across BOTH views: '' | 'line' | 'curve' | 'product' | 'ratio'. */
+    contrastHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Contrast highlight',
+        description: 'Which graph or table column is highlighted across the linked pair',
+        color: '#6E70DE',
+        bgColor: 'rgba(142, 144, 245, 0.22)',
+    },
+
+    /** Chip colours only — spread onto the y divided by x phrase, which writes contrastHighlight. */
+    contrastRatioHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Ratio column highlight chip',
+        description: 'Teal chip colours for the prose phrase that highlights the y divided by x column',
+        color: '#3EAE8C',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
+    },
+
+    /** Assessment: a falling pair of readings that is neither direct nor inverse. */
+    answer_contrast_neither: {
+        defaultValue: '',
+        type: 'select',
+        label: 'Which relationship',
+        description: 'Student answer for readings where y falls but neither the product nor the ratio repeats',
+        placeholder: '???',
+        options: ['inverse', 'direct', 'neither'],
+        correctAnswer: 'neither',
+        color: '#8E90F5',
+    },
+
+    /** Assessment: the constant behind readings whose product is always 30. */
+    answer_contrast_constant: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Constant from a product',
+        description: 'Student answer for k when x times y is always 30',
+        placeholder: '???',
+        correctAnswer: '30',
+        color: '#8E90F5',
+    },
+
+    // ========================================
     // SECTION: When x Doubles
     // ========================================
 
