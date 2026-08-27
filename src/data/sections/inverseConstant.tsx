@@ -323,7 +323,7 @@ function FamilyOfCurvesFigure() {
                 setGhosts([]);
                 setVar("inverseConstant", K_DEFAULT);
             }}
-            caption="Travel time against speed for one fixed distance. Drag the teal handle up, away from the corner, and each stop the curve leaves behind stays as a faded grey trail."
+            caption="Travel time against speed for one fixed distance. Drag the teal handle up, away from the corner, and each distance it passes stays behind as a faded grey curve."
         >
             <FamilyOfCurvesDrawing ghosts={ghosts} onVisit={rememberVisited} />
             <InteractionHintSequence
@@ -376,7 +376,7 @@ export const inverseConstantBlocks: ReactElement[] = [
             <EditableParagraph id="para-constant-naming" blockId="constant-naming">
                 That repeated number has a name: the constant, k. Rearranged, it gives y = k/x, an
                 inverse relationship. Pull the teal handle up, away from the corner, and every stop
-                you pass leaves a faint grey curve behind.
+                you pass leaves a faded grey curve behind.
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -409,7 +409,7 @@ export const inverseConstantBlocks: ReactElement[] = [
                     highlightId="ghosts"
                     {...linkedHighlightPropsFromDefinition(getVariableInfo("inverseGhostHighlight"))}
                 >
-                    ghost
+                    faded curve
                 </InlineLinkedHighlight>
                 {" "}behind it. It never straightens, and it never quite touches either axis.
             </EditableParagraph>
