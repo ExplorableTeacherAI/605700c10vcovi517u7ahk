@@ -7,6 +7,7 @@ import {
     InlineClozeChoice,
     InlineClozeInput,
     InlineFeedback,
+    InlineFormula,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
     InlineSpotColor,
@@ -32,6 +33,7 @@ import {
     COLOR_DIRECT_TEXT,
     COLOR_X,
     COLOR_X_TEXT,
+    FORMULA_COLORS,
 } from "../lessonColors";
 
 const xProps = spotColorPropsFromDefinition(getVariableInfo("quantityX"));
@@ -488,6 +490,52 @@ function ArithmeticFigure() {
     );
 }
 
+/**
+ * The two tests, carrying live numbers. Coral belongs to the line, teal to the
+ * curve, and the shared x is the same indigo the student drags in the prose.
+ */
+function LiveTestsFormula() {
+    const x = useVar<number>("contrastX", X_DEFAULT);
+    return (
+        <FormulaBlock
+            latex={
+                `\\begin{aligned}` +
+                `\\clr{direct}{y = 2x} &\\;\\Rightarrow\\; \\highlight{ratio}{y \\div x} ` +
+                `\\;=\\; \\clr{direct}{${fmt(lineY(x))}} \\div \\scrub{contrastX} \\;=\\; \\clr{k}{2} \\\\[6pt] ` +
+                `\\clr{inverse}{y = 2/x} &\\;\\Rightarrow\\; \\highlight{product}{x \\times y} ` +
+                `\\;=\\; \\scrub{contrastX} \\times \\clr{inverse}{${fmt(curveY(x))}} \\;=\\; \\clr{k}{2}` +
+                `\\end{aligned}`
+            }
+            colorMap={{
+                direct: FORMULA_COLORS.direct,
+                inverse: FORMULA_COLORS.inverse,
+                k: FORMULA_COLORS.k,
+            }}
+            variables={{
+                contrastX: {
+                    min: X_MIN,
+                    max: X_MAX_DRAG,
+                    step: 0.1,
+                    color: COLOR_X_TEXT,
+                    formatValue: fmt,
+                },
+            }}
+            linkedHighlights={{
+                ratio: {
+                    varName: "contrastHighlight",
+                    color: FORMULA_COLORS.ratio,
+                    bgColor: "rgba(244, 168, 154, 0.24)",
+                },
+                product: {
+                    varName: "contrastHighlight",
+                    color: FORMULA_COLORS.product,
+                    bgColor: "rgba(98, 208, 173, 0.22)",
+                },
+            }}
+        />
+    );
+}
+
 export const straightLineOrCurveBlocks: ReactElement[] = [
     <StackLayout key="layout-contrast-heading" maxWidth="xl">
         <Block id="contrast-heading" padding="md">
@@ -511,10 +559,19 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
                 >
                     direct
                 </InlineTooltip>
-                {" "}rule, y = 2x, and the{" "}
+                {" "}rule,{" "}
+                <InlineFormula
+                    latex="\clr{direct}{y = 2x}"
+                    colorMap={{ direct: FORMULA_COLORS.direct }}
+                />
+                , and the{" "}
                 <InlineSpotColor varName="quantityConstant" {...kProps}>teal curve</InlineSpotColor>
-                {" "}is an inverse one, y = 2/x. Drag either dot sideways, then watch which number in
-                each row refuses to move.
+                {" "}is an inverse one,{" "}
+                <InlineFormula
+                    latex="\clr{inverse}{y = 2/x}"
+                    colorMap={{ inverse: FORMULA_COLORS.inverse }}
+                />
+                . Drag either dot sideways, then watch which number in each row refuses to move.
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -530,22 +587,7 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
 
     <StackLayout key="layout-contrast-tests-formula" maxWidth="xl">
         <Block id="contrast-tests-formula" padding="lg">
-            <FormulaBlock
-                latex="\clr{direct}{y = 2x} \;\Rightarrow\; \highlight{ratio}{y \div x} = 2 \qquad\qquad \clr{inverse}{y = 2/x} \;\Rightarrow\; \highlight{product}{x \times y} = 2"
-                colorMap={{ direct: COLOR_DIRECT_TEXT, inverse: COLOR_CONSTANT_TEXT }}
-                linkedHighlights={{
-                    ratio: {
-                        varName: "contrastHighlight",
-                        color: COLOR_DIRECT_TEXT,
-                        bgColor: "rgba(244, 168, 154, 0.24)",
-                    },
-                    product: {
-                        varName: "contrastHighlight",
-                        color: COLOR_CONSTANT_TEXT,
-                        bgColor: "rgba(98, 208, 173, 0.22)",
-                    },
-                }}
-            />
+            <LiveTestsFormula />
         </Block>
     </StackLayout>,
 
@@ -631,8 +673,17 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
     <StackLayout key="layout-contrast-question-constant" maxWidth="xl">
         <Block id="contrast-question-constant" padding="md">
             <EditableParagraph id="para-contrast-question-constant" blockId="contrast-question-constant">
-                Another set of readings gives x × y = 30 every single time. Written in the form y = k/x,
-                its constant k must be{" "}
+                Another set of readings gives{" "}
+                <InlineFormula
+                    latex="\clr{product}{x \times y} = 30"
+                    colorMap={{ product: FORMULA_COLORS.product }}
+                />
+                {" "}every single time. Written in the form{" "}
+                <InlineFormula
+                    latex="\clr{y}{y} = \clr{k}{k} \,/\, \clr{x}{x}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
+                , its constant k must be{" "}
                 <InlineFeedback
                     varName="answer_contrast_constant"
                     correctValue="30"

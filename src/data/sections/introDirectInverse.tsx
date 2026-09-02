@@ -4,10 +4,12 @@ import { StackLayout } from "@/components/layouts";
 import {
     EditableH1,
     EditableParagraph,
+    InlineFormula,
     InlineSpotColor,
     InlineTooltip,
 } from "@/components/atoms";
 import { getVariableInfo, spotColorPropsFromDefinition } from "../variables";
+import { FORMULA_COLORS } from "../lessonColors";
 
 // Colour identities used from here to the end of the lesson:
 // indigo = x (speed), violet = y (time), teal = k (the distance that never moves).
@@ -37,8 +39,11 @@ export const introDirectInverseBlocks: ReactElement[] = [
                 <InlineSpotColor varName="quantityX" {...xProps}>60 km/h</InlineSpotColor>
                 {" "}it takes{" "}
                 <InlineSpotColor varName="quantityY" {...yProps}>2</InlineSpotColor>
-                . Speed went up, time came down, and the{" "}
-                <InlineSpotColor varName="quantityConstant" {...kProps}>120 km</InlineSpotColor>
+                . Speed went up, time came down, and{" "}
+                <InlineFormula
+                    latex="\clr{x}{40} \times \clr{y}{3} = \clr{x}{60} \times \clr{y}{2} = \clr{k}{120}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
                 {" "}never moved.
             </EditableParagraph>
         </Block>

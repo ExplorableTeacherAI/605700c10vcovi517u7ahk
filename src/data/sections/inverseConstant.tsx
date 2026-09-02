@@ -6,6 +6,7 @@ import {
     EditableParagraph,
     InlineClozeInput,
     InlineFeedback,
+    InlineFormula,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
     InlineSpotColor,
@@ -359,6 +360,22 @@ function FamilyOfCurvesFigure() {
     );
 }
 
+/**
+ * The rule with live numbers in it. Four colours, each one matching the figure:
+ * violet time, teal distance, indigo speed, and the teal draggable k.
+ */
+function LiveDriveFormula() {
+    const constant = useVar<number>("inverseConstant", K_DEFAULT);
+    const time = (constant / HANDLE_SPEED).toFixed(1);
+    return (
+        <FormulaBlock
+            latex={`\\clr{y}{\\text{time}} = \\dfrac{\\clr{k}{\\text{distance}}}{\\clr{x}{\\text{speed}}} = \\dfrac{\\scrub{inverseConstant}}{\\clr{x}{60}} = \\clr{y}{${time}\\text{ h}}`}
+            colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+            variables={scrubVarsFromDefinitions(["inverseConstant"])}
+        />
+    );
+}
+
 /** Derived readout: the time the drive takes at a steady 60 km/h. */
 function DriveTimeAtSixty() {
     const constant = useVar<number>("inverseConstant", K_DEFAULT);
@@ -381,8 +398,17 @@ export const inverseConstantBlocks: ReactElement[] = [
                 <InlineSpotColor varName="quantityX" {...xProps}>speed</InlineSpotColor>
                 {" "}by{" "}
                 <InlineSpotColor varName="quantityY" {...yProps}>time</InlineSpotColor>
-                : 40 &times; 3 = 120, and 60 &times; 2 = 120. Whichever pair you pick, the answer is
-                the same.
+                :{" "}
+                <InlineFormula
+                    latex="\clr{x}{40} \times \clr{y}{3} = \clr{k}{120}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
+                , and{" "}
+                <InlineFormula
+                    latex="\clr{x}{60} \times \clr{y}{2} = \clr{k}{120}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
+                . Whichever pair you pick, the answer is the same.
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -409,12 +435,18 @@ export const inverseConstantBlocks: ReactElement[] = [
                 ,{" "}
                 <InlineSpotColor varName="quantityConstant" {...kProps}>k</InlineSpotColor>
                 . Rearranged, it gives{" "}
-                <InlineSpotColor varName="quantityY" {...yProps}>y</InlineSpotColor>
-                {" "}={" "}
-                <InlineSpotColor varName="quantityConstant" {...kProps}>k</InlineSpotColor>
-                /
-                <InlineSpotColor varName="quantityX" {...xProps}>x</InlineSpotColor>
-                , an inverse relationship. Pull the teal handle up, away from the corner, and every
+                <InlineFormula
+                    latex="\clr{y}{y} = \clr{k}{k} \,/\, \clr{x}{x}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
+                , an{" "}
+                <InlineTooltip
+                    id="tooltip-inverse-relationship"
+                    tooltip="A relationship where x multiplied by y always lands on the same number, so as one grows the other must shrink."
+                >
+                    inverse
+                </InlineTooltip>
+                {" "}relationship. Pull the teal handle up, away from the corner, and every
                 stop you pass leaves a faded grey curve behind.
             </EditableParagraph>
         </Block>
@@ -428,11 +460,7 @@ export const inverseConstantBlocks: ReactElement[] = [
 
     <StackLayout key="layout-constant-live-formula" maxWidth="xl">
         <Block id="constant-live-formula" padding="lg">
-            <FormulaBlock
-                latex="\clr{y}{\text{time}} = \dfrac{\scrub{inverseConstant}}{\clr{x}{\text{speed}}}"
-                colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y }}
-                variables={scrubVarsFromDefinitions(["inverseConstant"])}
-            />
+            <LiveDriveFormula />
         </Block>
     </StackLayout>,
 
@@ -467,6 +495,10 @@ export const inverseConstantBlocks: ReactElement[] = [
                 {" "}behind it. One click brings back{" "}
                 <InlineTrigger varName="inverseConstant" value={120} icon="refresh">
                     the original 120 km drive
+                </InlineTrigger>
+                , or stretches it into{" "}
+                <InlineTrigger varName="inverseConstant" value={240} icon="zap">
+                    a 240 km haul
                 </InlineTrigger>
                 .
             </EditableParagraph>

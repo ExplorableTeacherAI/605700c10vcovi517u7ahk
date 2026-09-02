@@ -7,6 +7,7 @@ import {
     InlineClozeChoice,
     InlineClozeInput,
     InlineFeedback,
+    InlineFormula,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
     InlineSpotColor,
@@ -362,6 +363,20 @@ function DoublingChainFigure() {
     );
 }
 
+/**
+ * The rule with the live value in it: teal constant, indigo draggable x, violet y.
+ */
+function LiveDoublingFormula() {
+    const startX = useVar<number>("doublingStartX", START_DEFAULT);
+    return (
+        <FormulaBlock
+            latex={`\\clr{y}{y} = \\dfrac{\\clr{k}{120}}{\\scrub{doublingStartX}} = \\clr{y}{${trimNumber(CONSTANT / startX)}}`}
+            colorMap={{ y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+            variables={scrubVarsFromDefinitions(["doublingStartX"])}
+        />
+    );
+}
+
 /** Derived readout: y for the first dot, using the figure's fixed k. */
 function FirstDotY() {
     const startX = useVar<number>("doublingStartX", START_DEFAULT);
@@ -405,11 +420,7 @@ export const whenXDoublesBlocks: ReactElement[] = [
 
     <StackLayout key="layout-doubling-live-formula" maxWidth="xl">
         <Block id="doubling-live-formula" padding="lg">
-            <FormulaBlock
-                latex="\clr{y}{y} = \dfrac{\clr{k}{120}}{\scrub{doublingStartX}}"
-                colorMap={{ y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
-                variables={scrubVarsFromDefinitions(["doublingStartX"])}
-            />
+            <LiveDoublingFormula />
         </Block>
     </StackLayout>,
 
@@ -451,8 +462,12 @@ export const whenXDoublesBlocks: ReactElement[] = [
     <StackLayout key="layout-doubling-question-halved" maxWidth="xl">
         <Block id="doubling-question-halved" padding="md">
             <EditableParagraph id="para-doubling-question-halved" blockId="doubling-question-halved">
-                A shorter journey has a constant of 36, so when x is 3, y is 12. Double x to 6 and y
-                becomes{" "}
+                A shorter journey has a constant of 36, so{" "}
+                <InlineFormula
+                    latex="\clr{x}{3} \times \clr{y}{12} = \clr{k}{36}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                />
+                . Double x to 6 and y becomes{" "}
                 <InlineFeedback
                     varName="answer_doubling_halved"
                     correctValue="6"
@@ -492,7 +507,12 @@ export const whenXDoublesBlocks: ReactElement[] = [
     <StackLayout key="layout-doubling-question-tripled" maxWidth="xl">
         <Block id="doubling-question-tripled" padding="md">
             <EditableParagraph id="para-doubling-question-tripled" blockId="doubling-question-tripled">
-                Now stretch the idea. If x is tripled instead of doubled, y ends up{" "}
+                Now stretch the idea. If{" "}
+                <InlineFormula
+                    latex="\clr{x}{x} \longrightarrow \clr{x}{3x}"
+                    colorMap={{ x: FORMULA_COLORS.x }}
+                />
+                {" "}instead of doubling, y ends up{" "}
                 <InlineFeedback
                     varName="answer_doubling_tripled"
                     correctValue="a third of it"
