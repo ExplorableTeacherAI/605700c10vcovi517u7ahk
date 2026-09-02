@@ -386,7 +386,7 @@ export const inverseConstantBlocks: ReactElement[] = [
     <StackLayout key="layout-constant-heading" maxWidth="xl">
         <Block id="constant-heading" padding="md">
             <EditableH2 id="h2-constant-heading" blockId="constant-heading">
-                The Constant Behind y = k/x
+                The Constant of Proportionality in y = k/x
             </EditableH2>
         </Block>
     </StackLayout>,

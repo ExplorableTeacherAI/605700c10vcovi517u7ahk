@@ -387,7 +387,7 @@ export const whenXDoublesBlocks: ReactElement[] = [
     <StackLayout key="layout-doubling-heading" maxWidth="xl">
         <Block id="doubling-heading" padding="md">
             <EditableH2 id="h2-doubling-heading" blockId="doubling-heading">
-                When x Doubles
+                Multiplicative Scaling: Doubling x, Halving y
             </EditableH2>
         </Block>
     </StackLayout>,

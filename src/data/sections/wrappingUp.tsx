@@ -20,7 +20,7 @@ export const wrappingUpBlocks: ReactElement[] = [
     <StackLayout key="layout-wrapup-heading" maxWidth="xl">
         <Block id="wrapup-heading" padding="md">
             <EditableH2 id="h2-wrapup-heading" blockId="wrapup-heading">
-                Wrapping Up
+                Summary: The Ratio and Product Tests
             </EditableH2>
         </Block>
     </StackLayout>,

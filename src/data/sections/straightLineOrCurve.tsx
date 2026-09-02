@@ -540,7 +540,7 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
     <StackLayout key="layout-contrast-heading" maxWidth="xl">
         <Block id="contrast-heading" padding="md">
             <EditableH2 id="h2-contrast-heading" blockId="contrast-heading">
-                Straight Line or Curve
+                Linear versus Reciprocal Graphs
             </EditableH2>
         </Block>
     </StackLayout>,

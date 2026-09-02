@@ -21,7 +21,7 @@ export const introDirectInverseBlocks: ReactElement[] = [
     <StackLayout key="layout-intro-title" maxWidth="xl">
         <Block id="intro-title" padding="md">
             <EditableH1 id="h1-intro-title" blockId="intro-title">
-                Direct and Inverse Relationships
+                Direct and Inverse Proportionality
             </EditableH1>
         </Block>
     </StackLayout>,
