@@ -95,7 +95,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         min: 0,
         max: 300,
         step: 30,
-        color: '#62D0AD',
+        color: '#3EAE8C',
     },
 
     /** Shared highlight channel for the curve figure: '' | 'current' | 'ghosts'. */
@@ -131,7 +131,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         min: 0.5,
         max: 3,
         step: 0.1,
-        color: '#64748B',
+        color: '#6E70DE',
     },
 
     /** Shared highlight channel across BOTH views: '' | 'line' | 'curve' | 'product' | 'ratio'. */
@@ -140,8 +140,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         type: 'text',
         label: 'Contrast highlight',
         description: 'Which graph or table column is highlighted across the linked pair',
-        color: '#6E70DE',
-        bgColor: 'rgba(142, 144, 245, 0.22)',
+        color: '#3EAE8C',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
     },
 
     /** Chip colours only — spread onto the y divided by x phrase, which writes contrastHighlight. */
@@ -149,9 +149,9 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         defaultValue: '',
         type: 'text',
         label: 'Ratio column highlight chip',
-        description: 'Teal chip colours for the prose phrase that highlights the y divided by x column',
-        color: '#3EAE8C',
-        bgColor: 'rgba(98, 208, 173, 0.22)',
+        description: 'Coral chip colours for the prose phrase that highlights the y divided by x column',
+        color: '#C96A52',
+        bgColor: 'rgba(244, 168, 154, 0.24)',
     },
 
     /** Assessment: a falling pair of readings that is neither direct nor inverse. */
@@ -163,7 +163,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         placeholder: '???',
         options: ['inverse', 'direct', 'neither'],
         correctAnswer: 'neither',
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     /** Assessment: the constant behind readings whose product is always 30. */
@@ -174,7 +175,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for k when x times y is always 30',
         placeholder: '???',
         correctAnswer: '30',
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     // ========================================
@@ -190,7 +192,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         min: 3,
         max: 6,
         step: 0.5,
-        color: '#62D0AD',
+        color: '#6E70DE',
     },
 
     /** Shared highlight channel for the chain figure: '' | 'fractions' | 'subtractions'. */
@@ -221,7 +223,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for y when x doubles from 3 to 6 with k = 36',
         placeholder: '???',
         correctAnswer: '6',
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     /** Assessment: what tripling x does to y. */
@@ -233,7 +236,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         placeholder: '???',
         options: ['a third of it', 'half of it', 'two thirds of it', 'three times it'],
         correctAnswer: 'a third of it',
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     /** Stepped working, step 1: which calculation gives the constant. */
@@ -245,7 +249,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         placeholder: 'pick the calculation',
         options: ['15 × 4', '15 ÷ 4', '4 ÷ 15', '15 + 4'],
         correctAnswer: '15 × 4',
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     /** Assessment: the constant of a 15 km/h, 4 hour ride. */
@@ -256,7 +261,52 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for the constant of a 15 km/h ride lasting 4 hours',
         placeholder: 'work out the value',
         correctAnswer: ['60', '60 km'],
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
+    },
+
+    // ========================================
+    // COLOUR IDENTITIES (shared by prose, formulas and figures)
+    // ========================================
+
+    /** x, the quantity the student changes — indigo everywhere. */
+    quantityX: {
+        defaultValue: 'x',
+        type: 'text',
+        label: 'Colour of x',
+        description: 'Indigo colour identity for x, used by InlineSpotColor and the figures',
+        color: '#6E70DE',
+        bgColor: 'rgba(142, 144, 245, 0.18)',
+    },
+
+    /** y, the quantity that responds — violet everywhere. */
+    quantityY: {
+        defaultValue: 'y',
+        type: 'text',
+        label: 'Colour of y',
+        description: 'Violet colour identity for y, used by InlineSpotColor and the figures',
+        color: '#8A5FE0',
+        bgColor: 'rgba(172, 139, 249, 0.18)',
+    },
+
+    /** k, the constant — teal everywhere. */
+    quantityConstant: {
+        defaultValue: 'k',
+        type: 'text',
+        label: 'Colour of k',
+        description: 'Teal colour identity for the constant k, used by InlineSpotColor and the figures',
+        color: '#3EAE8C',
+        bgColor: 'rgba(98, 208, 173, 0.18)',
+    },
+
+    /** The direct relationship — coral, kept apart from the inverse teal. */
+    quantityDirect: {
+        defaultValue: 'direct',
+        type: 'text',
+        label: 'Colour of the direct relationship',
+        description: 'Coral colour identity for the rising straight line y = 2x',
+        color: '#C96A52',
+        bgColor: 'rgba(244, 168, 154, 0.22)',
     },
 
     /** Assessment: time for a 60 km journey at 20 km/h. */
@@ -267,7 +317,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for the time a 60 km journey takes at 20 km/h',
         placeholder: '???',
         correctAnswer: ['3', '3 h', '3 hours'],
-        color: '#8E90F5',
+        color: '#D2649F',
+        bgColor: 'rgba(248, 160, 205, 0.18)',
     },
 
     // Uncomment and modify these examples for your lesson:

@@ -4,12 +4,13 @@ import { StackLayout, Step, StepLayout } from "@/components/layouts";
 import {
     EditableH2,
     EditableParagraph,
-    InlineClozeChoice,
     InlineClozeInput,
     InlineFeedback,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
+    InlineSpotColor,
     InlineTooltip,
+    InlineTrigger,
     InteractionHintSequence,
 } from "@/components/atoms";
 import { Figure, FigureSlider, FormulaBlock } from "@/components/molecules";
@@ -21,7 +22,20 @@ import {
     clozePropsFromDefinition,
     linkedHighlightPropsFromDefinition,
     numberPropsFromDefinition,
+    scrubVarsFromDefinitions,
+    spotColorPropsFromDefinition,
 } from "../variables";
+import {
+    COLOR_CONSTANT,
+    COLOR_CONSTANT_TEXT,
+    COLOR_X_TEXT,
+    COLOR_Y_TEXT,
+    FORMULA_COLORS,
+} from "../lessonColors";
+
+const xProps = spotColorPropsFromDefinition(getVariableInfo("quantityX"));
+const yProps = spotColorPropsFromDefinition(getVariableInfo("quantityY"));
+const kProps = spotColorPropsFromDefinition(getVariableInfo("quantityConstant"));
 
 // ── View geometry ────────────────────────────────────────────────────────────
 // Gutters are reserved BEFORE the plot is sized, so no label can be clipped.
@@ -48,7 +62,7 @@ const INK = "#334155";
 const INK_STRUCTURE = "#64748B";
 const INK_QUIET = "#CBD5E1";
 const GRID = "#F1F5F9";
-const ACCENT = "#62D0AD"; // ONE accent: the curve the student is holding
+const ACCENT = COLOR_CONSTANT; // ONE accent: the curve the student is holding, drawn in k's teal
 
 // One formatter per quantity — figure, slider readout and prose all use these.
 const formatDistance = (value: number) => `${Math.round(value)} km`;
@@ -158,14 +172,18 @@ function FamilyOfCurvesDrawing({ ghosts, onVisit }: DrawingProps) {
 
                 {/* Readouts — beside the drawing, never over it. */}
                 <g fontSize="12" style={{ fontVariantNumeric: "tabular-nums", ...EASE_150 }}>
-                    <text x="24" y="40" fill={INK} opacity={opacity("__structure")}>
+                    <text x="24" y="40" fill={COLOR_Y_TEXT} opacity={opacity("__structure")}>
                         time (h)
                     </text>
-                    <text x={PLOT_RIGHT} y="40" textAnchor="end" fill={ACCENT} opacity={opacity("current")}>
+                    <text x={PLOT_RIGHT} y="40" textAnchor="end" fill={COLOR_CONSTANT_TEXT} opacity={opacity("current")}>
                         {`distance k = ${formatDistance(constant)}`}
                     </text>
                     <text x={PLOT_RIGHT} y="58" textAnchor="end" fill={INK} opacity={opacity("current")}>
-                        {`60 km/h × ${formatTime(handleTime)} = ${formatDistance(constant)}`}
+                        <tspan fill={COLOR_X_TEXT}>60 km/h</tspan>
+                        {" \u00D7 "}
+                        <tspan fill={COLOR_Y_TEXT}>{formatTime(handleTime)}</tspan>
+                        {" = "}
+                        <tspan fill={COLOR_CONSTANT_TEXT}>{formatDistance(constant)}</tspan>
                     </text>
                 </g>
 
@@ -205,7 +223,7 @@ function FamilyOfCurvesDrawing({ ghosts, onVisit }: DrawingProps) {
                         y={PLOT_BOTTOM + 44}
                         textAnchor="middle"
                         fontSize="12"
-                        fill={INK}
+                        fill={COLOR_X_TEXT}
                     >
                         speed (km/h)
                     </text>
@@ -359,24 +377,45 @@ export const inverseConstantBlocks: ReactElement[] = [
     <StackLayout key="layout-constant-product" maxWidth="xl">
         <Block id="constant-product" padding="sm">
             <EditableParagraph id="para-constant-product" blockId="constant-product">
-                Back to that drive. Multiply speed by time: 40 &times; 3 = 120, and 60 &times; 2 = 120.
-                Whichever pair you pick, the answer is the same.
+                Back to that drive. Multiply{" "}
+                <InlineSpotColor varName="quantityX" {...xProps}>speed</InlineSpotColor>
+                {" "}by{" "}
+                <InlineSpotColor varName="quantityY" {...yProps}>time</InlineSpotColor>
+                : 40 &times; 3 = 120, and 60 &times; 2 = 120. Whichever pair you pick, the answer is
+                the same.
             </EditableParagraph>
         </Block>
     </StackLayout>,
 
     <StackLayout key="layout-constant-formula" maxWidth="xl">
         <Block id="constant-formula" padding="lg">
-            <FormulaBlock latex="x \times y = k \qquad \Longrightarrow \qquad y = \frac{k}{x}" />
+            <FormulaBlock
+                latex="\clr{x}{x} \times \clr{y}{y} = \clr{k}{k} \qquad \Longrightarrow \qquad \clr{y}{y} = \frac{\clr{k}{k}}{\clr{x}{x}}"
+                colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+            />
         </Block>
     </StackLayout>,
 
     <StackLayout key="layout-constant-naming" maxWidth="xl">
         <Block id="constant-naming" padding="sm">
             <EditableParagraph id="para-constant-naming" blockId="constant-naming">
-                That repeated number has a name: the constant, k. Rearranged, it gives y = k/x, an
-                inverse relationship. Pull the teal handle up, away from the corner, and every stop
-                you pass leaves a faded grey curve behind.
+                That repeated number has a name: the{" "}
+                <InlineTooltip
+                    id="tooltip-constant-definition"
+                    tooltip="A number that stays exactly the same however much the other two quantities change."
+                >
+                    constant
+                </InlineTooltip>
+                ,{" "}
+                <InlineSpotColor varName="quantityConstant" {...kProps}>k</InlineSpotColor>
+                . Rearranged, it gives{" "}
+                <InlineSpotColor varName="quantityY" {...yProps}>y</InlineSpotColor>
+                {" "}={" "}
+                <InlineSpotColor varName="quantityConstant" {...kProps}>k</InlineSpotColor>
+                /
+                <InlineSpotColor varName="quantityX" {...xProps}>x</InlineSpotColor>
+                , an inverse relationship. Pull the teal handle up, away from the corner, and every
+                stop you pass leaves a faded grey curve behind.
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -384,6 +423,16 @@ export const inverseConstantBlocks: ReactElement[] = [
     <StackLayout key="layout-constant-visual" maxWidth="xl">
         <Block id="constant-visual" padding="sm" hasVisualization>
             <FamilyOfCurvesFigure />
+        </Block>
+    </StackLayout>,
+
+    <StackLayout key="layout-constant-live-formula" maxWidth="xl">
+        <Block id="constant-live-formula" padding="lg">
+            <FormulaBlock
+                latex="\clr{y}{\text{time}} = \dfrac{\scrub{inverseConstant}}{\clr{x}{\text{speed}}}"
+                colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y }}
+                variables={scrubVarsFromDefinitions(["inverseConstant"])}
+            />
         </Block>
     </StackLayout>,
 
@@ -395,7 +444,11 @@ export const inverseConstantBlocks: ReactElement[] = [
                     varName="inverseConstant"
                     {...numberPropsFromDefinition(getVariableInfo("inverseConstant"))}
                 />
-                {" "}km, a steady 60 km/h gets you there in <DriveTimeAtSixty /> hours, and the{" "}
+                {" "}km, a steady{" "}
+                <InlineSpotColor varName="quantityX" {...xProps}>60 km/h</InlineSpotColor>
+                {" "}gets you there in <DriveTimeAtSixty />{" "}
+                <InlineSpotColor varName="quantityY" {...yProps}>hours</InlineSpotColor>
+                , and the{" "}
                 <InlineLinkedHighlight
                     varName="inverseCurveHighlight"
                     highlightId="current"
@@ -411,7 +464,11 @@ export const inverseConstantBlocks: ReactElement[] = [
                 >
                     faded curve
                 </InlineLinkedHighlight>
-                {" "}behind it. It never straightens, and it never quite touches either axis.
+                {" "}behind it. One click brings back{" "}
+                <InlineTrigger varName="inverseConstant" value={120} icon="refresh">
+                    the original 120 km drive
+                </InlineTrigger>
+                .
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -441,58 +498,60 @@ export const inverseConstantBlocks: ReactElement[] = [
     </StackLayout>,
 
     <StepLayout key="layout-constant-question-product" showProgress={false}>
-        <Step completionVarName="answer_constant_operation" autoAdvance>
+        <Step completionVarName="answer_constant_operation" correctAnswer="15 × 4" autoAdvance>
             <Block id="constant-question-operation" padding="md">
                 <EditableParagraph id="para-constant-question-operation" blockId="constant-question-operation">
-                    A cyclist rides at a steady 15 km/h for 4 hours. To find the constant of that
-                    ride, the calculation you need is{" "}
-                    <InlineFeedback
-                        varName="answer_constant_operation"
-                        correctValue="15 × 4"
-                        position="terminal"
-                        successMessage="— yes, the constant of an inverse pair is always the two values multiplied"
-                        failureMessage="— not that one."
-                        hint="Speed and time multiply back to the distance, they are not divided"
-                    >
-                        <InlineClozeChoice
-                            varName="answer_constant_operation"
-                            correctAnswer="15 × 4"
-                            options={["15 × 4", "15 ÷ 4", "4 ÷ 15", "15 + 4"]}
-                            {...choicePropsFromDefinition(getVariableInfo("answer_constant_operation"))}
-                        />
-                    </InlineFeedback>
-                    .
+                    A cyclist rides at a steady{" "}
+                    <InlineSpotColor varName="quantityX" {...xProps}>15 km/h</InlineSpotColor>
+                    {" "}for{" "}
+                    <InlineSpotColor varName="quantityY" {...yProps}>4 hours</InlineSpotColor>
+                    . Which calculation gives the constant of that ride?
                 </EditableParagraph>
+            </Block>
+            <Block id="constant-question-operation-formula" padding="lg">
+                <FormulaBlock
+                    latex="\clr{k}{k} = \choice{answer_constant_operation}"
+                    colorMap={{ k: FORMULA_COLORS.k }}
+                    clozeChoices={{
+                        answer_constant_operation: {
+                            correctAnswer: "15 × 4",
+                            options: getVariableInfo("answer_constant_operation")?.options ?? [],
+                            ...choicePropsFromDefinition(getVariableInfo("answer_constant_operation")),
+                        },
+                    }}
+                />
             </Block>
         </Step>
 
-        <Step completionVarName="answer_constant_product" autoAdvance>
+        <Step completionVarName="answer_constant_product" correctAnswer={["60", "60 km"]} autoAdvance>
             <Block id="constant-question-product" padding="md">
                 <EditableParagraph id="para-constant-question-product" blockId="constant-question-product">
-                    Carry it out. The constant for that ride, the distance covered, is{" "}
-                    <InlineFeedback
-                        varName="answer_constant_product"
-                        correctValue={["60", "60 km"]}
-                        position="terminal"
-                        successMessage="— exactly, 15 × 4 = 60, so every speed and time on that ride multiplies back to 60"
-                        failureMessage="— not quite."
-                        hint="Fifteen kilometres every hour, for four hours"
-                    >
-                        <InlineClozeInput
-                            varName="answer_constant_product"
-                            correctAnswer={["60", "60 km"]}
-                            {...clozePropsFromDefinition(getVariableInfo("answer_constant_product"))}
-                        />
-                    </InlineFeedback>
-                    {" "}km.
+                    Right, the two values multiply. Now carry it out: the constant of that ride is the
+                    distance it covers, in km.
                 </EditableParagraph>
+            </Block>
+            <Block id="constant-question-product-formula" padding="lg">
+                <FormulaBlock
+                    latex="\clr{k}{k} = \clr{x}{15} \times \clr{y}{4} = \cloze{answer_constant_product}"
+                    colorMap={{ x: FORMULA_COLORS.x, y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                    clozeInputs={{
+                        answer_constant_product: {
+                            correctAnswer: "60 | 60 km",
+                            ...clozePropsFromDefinition(getVariableInfo("answer_constant_product")),
+                        },
+                    }}
+                />
             </Block>
         </Step>
 
         <Step>
             <Block id="constant-question-time" padding="md">
                 <EditableParagraph id="para-constant-question-time" blockId="constant-question-time">
-                    Now put that constant to work. Riding the same 60 km route at 20 km/h would take{" "}
+                    Now put that constant to work. Riding the same{" "}
+                    <InlineSpotColor varName="quantityConstant" {...kProps}>60 km</InlineSpotColor>
+                    {" "}route at{" "}
+                    <InlineSpotColor varName="quantityX" {...xProps}>20 km/h</InlineSpotColor>
+                    {" "}would take{" "}
                     <InlineFeedback
                         varName="answer_constant_time"
                         correctValue={["3", "3 h", "3 hours"]}
@@ -524,10 +583,11 @@ export const inverseConstantBlocks: ReactElement[] = [
                             {...clozePropsFromDefinition(getVariableInfo("answer_constant_time"))}
                         />
                     </InlineFeedback>
-                    {" "}hours.
+                    {" "}
+                    <InlineSpotColor varName="quantityY" {...yProps}>hours</InlineSpotColor>
+                    .
                 </EditableParagraph>
             </Block>
         </Step>
     </StepLayout>,
-
 ];

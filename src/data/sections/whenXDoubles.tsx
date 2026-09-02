@@ -9,9 +9,12 @@ import {
     InlineFeedback,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
+    InlineSpotColor,
+    InlineTooltip,
+    InlineTrigger,
     InteractionHintSequence,
 } from "@/components/atoms";
-import { Figure, FigureSlider } from "@/components/molecules";
+import { Figure, FigureSlider, FormulaBlock } from "@/components/molecules";
 import { useVar, useSetVar } from "@/stores";
 import { clamp, remap, useSpring } from "@/lib/motion";
 import {
@@ -20,7 +23,20 @@ import {
     clozePropsFromDefinition,
     linkedHighlightPropsFromDefinition,
     numberPropsFromDefinition,
+    scrubVarsFromDefinitions,
+    spotColorPropsFromDefinition,
 } from "../variables";
+import {
+    COLOR_CONSTANT,
+    COLOR_X,
+    COLOR_X_TEXT,
+    COLOR_Y_TEXT,
+    FORMULA_COLORS,
+} from "../lessonColors";
+
+const xProps = spotColorPropsFromDefinition(getVariableInfo("quantityX"));
+const yProps = spotColorPropsFromDefinition(getVariableInfo("quantityY"));
+const kProps = spotColorPropsFromDefinition(getVariableInfo("quantityConstant"));
 
 // ── View geometry ────────────────────────────────────────────────────────────
 // Right gutter of 180px is reserved for the bracket labels before the plot is
@@ -45,7 +61,7 @@ const INK = "#334155";
 const INK_STRUCTURE = "#64748B";
 const INK_QUIET = "#CBD5E1";
 const GRID = "#F1F5F9";
-const ACCENT = "#62D0AD";
+const ACCENT = COLOR_CONSTANT; // teal: the halving that never changes
 
 /** One formatter for every x and y this figure prints, in the figure and the prose. */
 const trimNumber = (value: number) => {
@@ -147,10 +163,10 @@ function DoublingChainDrawing() {
 
                 {/* Readout strip, top-right, where the hyperbola never reaches. */}
                 <g fontSize="12" style={{ fontVariantNumeric: "tabular-nums", ...EASE_150 }}>
-                    <text x={VIEW_WIDTH - 24} y="32" textAnchor="end" fill={INK} opacity={opacity("__structure")}>
+                    <text x={VIEW_WIDTH - 24} y="32" textAnchor="end" fill={COLOR_X_TEXT} opacity={opacity("__structure")}>
                         {`x:  ${chain.map((dot) => trimNumber(dot.x)).join("  →  ")}`}
                     </text>
-                    <text x={VIEW_WIDTH - 24} y="52" textAnchor="end" fill={ACCENT} opacity={opacity("fractions")}>
+                    <text x={VIEW_WIDTH - 24} y="52" textAnchor="end" fill={COLOR_Y_TEXT} opacity={opacity("fractions")}>
                         {`y:  ${chain.map((dot) => trimNumber(dot.y)).join("  →  ")}`}
                     </text>
                 </g>
@@ -171,10 +187,10 @@ function DoublingChainDrawing() {
                     <line x1={PLOT_LEFT} y1={PLOT_BOTTOM} x2={PLOT_RIGHT} y2={PLOT_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
                     <line x1={PLOT_LEFT} y1={PLOT_TOP} x2={PLOT_LEFT} y2={PLOT_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
                     <path d={curvePath()} fill="none" stroke={INK_STRUCTURE} strokeWidth="2" strokeLinecap="round" />
-                    <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={PLOT_BOTTOM + 44} textAnchor="middle" fontSize="12" fill={INK}>
+                    <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={PLOT_BOTTOM + 44} textAnchor="middle" fontSize="12" fill={COLOR_X_TEXT}>
                         x
                     </text>
-                    <text x={PLOT_LEFT} y={PLOT_TOP - 14} textAnchor="middle" fontSize="12" fill={INK}>
+                    <text x={PLOT_LEFT} y={PLOT_TOP - 14} textAnchor="middle" fontSize="12" fill={COLOR_Y_TEXT}>
                         y
                     </text>
                 </g>
@@ -268,7 +284,7 @@ function DoublingChainDrawing() {
                 })}
 
                 {/* The dots. Only the first one is grabbable. */}
-                <g opacity={opacity("fractions")} style={EASE_150}>
+                <g opacity={opacity("__structure")} style={EASE_150}>
                     {chain.slice(1).map((dot) => (
                         <circle
                             key={`dot-${dot.x}`}
@@ -276,14 +292,14 @@ function DoublingChainDrawing() {
                             cy={yToPx(dot.y)}
                             r="6"
                             fill="#FFFFFF"
-                            stroke={ACCENT}
+                            stroke={COLOR_X}
                             strokeWidth="2"
                         />
                     ))}
                 </g>
 
                 <g transform={`translate(${firstX} ${firstY}) scale(${handleScale})`}>
-                    <circle r="9" fill={ACCENT} filter="url(#doubling-chain-shadow)" />
+                    <circle r="9" fill={COLOR_X} filter="url(#doubling-chain-shadow)" />
                 </g>
                 <circle
                     cx={firstX}
@@ -328,7 +344,7 @@ function DoublingChainFigure() {
         <Figure
             id="doubling-chain"
             onReset={() => setVar("doublingStartX", START_DEFAULT)}
-            caption="Four dots on y = 120/x, each one at double the x of the dot before. Drag the solid teal dot and the whole chain rebuilds itself around it."
+            caption="Four dots on y = 120/x, each one at double the x of the dot before. Drag the solid indigo dot and the whole chain rebuilds itself around it."
         >
             <DoublingChainDrawing />
             <InteractionHintSequence
@@ -336,7 +352,7 @@ function DoublingChainFigure() {
                 steps={[
                     {
                         gesture: "drag-horizontal",
-                        label: "Drag the solid teal dot along the curve",
+                        label: "Drag the solid indigo dot along the curve",
                         position: { x: "17%", y: "38%" },
                         dragPath: { type: "line", startOffset: { x: -22, y: 0 }, endOffset: { x: 22, y: 0 } },
                     },
@@ -364,12 +380,18 @@ export const whenXDoublesBlocks: ReactElement[] = [
     <StackLayout key="layout-doubling-worked-example" maxWidth="xl">
         <Block id="doubling-worked-example" padding="sm">
             <EditableParagraph id="para-doubling-worked-example" blockId="doubling-worked-example">
-                Here is where inverse relationships catch people out. Keeping k at 120: when x is{" "}
+                Here is where inverse relationships catch people out. Keeping{" "}
+                <InlineSpotColor varName="quantityConstant" {...kProps}>k</InlineSpotColor>
+                {" "}at 120: when{" "}
+                <InlineSpotColor varName="quantityX" {...xProps}>x</InlineSpotColor>
+                {" "}is{" "}
                 <InlineScrubbleNumber
                     varName="doublingStartX"
                     {...numberPropsFromDefinition(getVariableInfo("doublingStartX"))}
                 />
-                , y is <FirstDotY />, because the two multiply back to 120. Drag the solid teal dot
+                ,{" "}
+                <InlineSpotColor varName="quantityY" {...yProps}>y</InlineSpotColor>
+                {" "}is <FirstDotY />, because the two multiply back to 120. Drag the solid indigo dot
                 along the curve, and every hollow dot behind it doubles x once more.
             </EditableParagraph>
         </Block>
@@ -378,6 +400,16 @@ export const whenXDoublesBlocks: ReactElement[] = [
     <StackLayout key="layout-doubling-visual" maxWidth="xl">
         <Block id="doubling-visual" padding="sm" hasVisualization>
             <DoublingChainFigure />
+        </Block>
+    </StackLayout>,
+
+    <StackLayout key="layout-doubling-live-formula" maxWidth="xl">
+        <Block id="doubling-live-formula" padding="lg">
+            <FormulaBlock
+                latex="\clr{y}{y} = \dfrac{\clr{k}{120}}{\scrub{doublingStartX}}"
+                colorMap={{ y: FORMULA_COLORS.y, k: FORMULA_COLORS.k }}
+                variables={scrubVarsFromDefinitions(["doublingStartX"])}
+            />
         </Block>
     </StackLayout>,
 
@@ -400,7 +432,18 @@ export const whenXDoublesBlocks: ReactElement[] = [
                 >
                     fraction beside it
                 </InlineLinkedHighlight>
-                {" "}stays stuck at one half. So what would tripling x do instead?
+                {" "}stays stuck at{" "}
+                <InlineTooltip
+                    id="tooltip-halving-definition"
+                    tooltip="Multiplying by one half, which is the same as dividing by two."
+                >
+                    one half
+                </InlineTooltip>
+                . For the tidiest run of all, start the chain at{" "}
+                <InlineTrigger varName="doublingStartX" value={3} icon="zap">
+                    x = 3
+                </InlineTrigger>
+                . So what would tripling x do instead?
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -425,7 +468,7 @@ export const whenXDoublesBlocks: ReactElement[] = [
                         steps: [
                             {
                                 gesture: "drag-horizontal",
-                                label: "Drag the solid teal dot right to x = 6 and watch every fraction label stay at one half",
+                                label: "Drag the solid indigo dot right to x = 6 and watch every teal fraction label stay at one half",
                                 position: { x: "17%", y: "38%" },
                                 dragPath: { type: "line", startOffset: { x: -22, y: 0 }, endOffset: { x: 22, y: 0 } },
                                 completionVar: "doublingStartX",

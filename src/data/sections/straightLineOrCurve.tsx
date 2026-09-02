@@ -9,9 +9,12 @@ import {
     InlineFeedback,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
+    InlineSpotColor,
+    InlineTooltip,
+    InlineTrigger,
     InteractionHintSequence,
 } from "@/components/atoms";
-import { Figure, FigureSlider } from "@/components/molecules";
+import { Figure, FigureSlider, FormulaBlock } from "@/components/molecules";
 import { useVar, useSetVar } from "@/stores";
 import { clamp, remap, useSpring } from "@/lib/motion";
 import {
@@ -20,7 +23,20 @@ import {
     clozePropsFromDefinition,
     linkedHighlightPropsFromDefinition,
     numberPropsFromDefinition,
+    spotColorPropsFromDefinition,
 } from "../variables";
+import {
+    COLOR_CONSTANT,
+    COLOR_CONSTANT_TEXT,
+    COLOR_DIRECT,
+    COLOR_DIRECT_TEXT,
+    COLOR_X,
+    COLOR_X_TEXT,
+} from "../lessonColors";
+
+const xProps = spotColorPropsFromDefinition(getVariableInfo("quantityX"));
+const directProps = spotColorPropsFromDefinition(getVariableInfo("quantityDirect"));
+const kProps = spotColorPropsFromDefinition(getVariableInfo("quantityConstant"));
 
 /**
  * A LINKED PAIR. Both views read `contrastX` and `contrastHighlight` from the
@@ -40,8 +56,10 @@ const INK = "#334155";
 const INK_STRUCTURE = "#64748B";
 const INK_QUIET = "#CBD5E1";
 const GRID = "#F1F5F9";
-const LINE_COLOR = "#62D0AD"; // y = 2x
-const CURVE_COLOR = "#8E90F5"; // y = 2/x
+const LINE_COLOR = COLOR_DIRECT; // y = 2x, the direct relationship
+const LINE_TEXT = COLOR_DIRECT_TEXT;
+const CURVE_COLOR = COLOR_CONSTANT; // y = 2/x, the inverse relationship
+const CURVE_TEXT = COLOR_CONSTANT_TEXT;
 
 /** One formatter for every value either view prints, and for the prose. */
 const fmt = (value: number) => value.toFixed(1);
@@ -154,7 +172,7 @@ function GraphsDrawing() {
                     ))}
                     <line x1={A_LEFT} y1={A_BOTTOM} x2={A_RIGHT} y2={A_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
                     <line x1={A_LEFT} y1={A_TOP} x2={A_LEFT} y2={A_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
-                    <text x={(A_LEFT + A_RIGHT) / 2} y={A_BOTTOM + 42} textAnchor="middle" fontSize="12" fill={INK}>
+                    <text x={(A_LEFT + A_RIGHT) / 2} y={A_BOTTOM + 42} textAnchor="middle" fontSize="12" fill={COLOR_X_TEXT}>
                         x
                     </text>
                     <text x={A_LEFT} y={A_TOP - 16} textAnchor="middle" fontSize="12" fill={INK}>
@@ -175,8 +193,8 @@ function GraphsDrawing() {
                     <circle cx={aX(X_DEFAULT)} cy={aY(curveY(X_DEFAULT))} r="5" fill="none" stroke={INK_QUIET} strokeWidth="1.5" />
 
                     {/* The visible tie: one x, read by both graphs. */}
-                    <line x1={aX(x)} y1={A_TOP} x2={aX(x)} y2={A_BOTTOM} stroke={INK_STRUCTURE} strokeWidth="1.5" strokeDasharray="4 4" />
-                    <text x={A_RIGHT} y={A_TOP - 16} textAnchor="end" fontSize="12" fill={INK} style={{ fontVariantNumeric: "tabular-nums" }}>
+                    <line x1={aX(x)} y1={A_TOP} x2={aX(x)} y2={A_BOTTOM} stroke={COLOR_X} strokeWidth="1.5" strokeDasharray="4 4" />
+                    <text x={A_RIGHT} y={A_TOP - 16} textAnchor="end" fontSize="12" fill={COLOR_X_TEXT} style={{ fontVariantNumeric: "tabular-nums" }}>
                         {`x = ${fmt(x)}`}
                     </text>
                 </g>
@@ -219,7 +237,7 @@ function GraphsDrawing() {
                         <path d={linePath()} fill="none" stroke={LINE_COLOR} strokeWidth="9" opacity={0.28} strokeLinecap="round" />
                     )}
                     <path d={linePath()} fill="none" stroke={LINE_COLOR} strokeWidth={weight("line", 3)} strokeLinecap="round" />
-                    <text x={aX(1.5) - 10} y={aY(3) - 8} textAnchor="end" fontSize="12" fill={LINE_COLOR}>
+                    <text x={aX(1.5) - 10} y={aY(3) - 8} textAnchor="end" fontSize="12" fill={LINE_TEXT}>
                         y = 2x
                     </text>
                 </g>
@@ -230,7 +248,7 @@ function GraphsDrawing() {
                         <path d={curveSvgPath()} fill="none" stroke={CURVE_COLOR} strokeWidth="9" opacity={0.28} strokeLinecap="round" />
                     )}
                     <path d={curveSvgPath()} fill="none" stroke={CURVE_COLOR} strokeWidth={weight("curve", 3)} strokeLinecap="round" />
-                    <text x={aX(2.4)} y={aY(curveY(2.4)) + 22} textAnchor="middle" fontSize="12" fill={CURVE_COLOR}>
+                    <text x={aX(2.4)} y={aY(curveY(2.4)) + 22} textAnchor="middle" fontSize="12" fill={CURVE_TEXT}>
                         y = 2/x
                     </text>
                 </g>
@@ -289,7 +307,7 @@ function GraphsFigure() {
                 setVar("contrastX", X_DEFAULT);
                 setVar("contrastHighlight", "");
             }}
-            caption="Both relationships built on the same constant, k = 2. Drag either dot sideways; both graphs are always read at the same x, and the hollow grey dots show where the pair started."
+            caption="Both relationships built on the same constant, k = 2. Drag the coral dot or the teal one sideways; both graphs are always read at the same x, and the hollow grey dots show where the pair started."
         >
             <GraphsDrawing />
             <InteractionHintSequence
@@ -297,7 +315,7 @@ function GraphsFigure() {
                 steps={[
                     {
                         gesture: "drag-horizontal",
-                        label: "Drag either dot sideways",
+                        label: "Drag the coral dot or the teal one sideways",
                         position: { x: "65%", y: "30%" },
                         dragPath: { type: "line", startOffset: { x: -22, y: 0 }, endOffset: { x: 22, y: 0 } },
                     },
@@ -324,6 +342,7 @@ function ArithmeticDrawing() {
             id: "line",
             label: "y = 2x",
             color: LINE_COLOR,
+            textColor: LINE_TEXT,
             product: lineY(x) * x,
             ratio: lineY(x) / x,
             frozen: "ratio",
@@ -334,6 +353,7 @@ function ArithmeticDrawing() {
             id: "curve",
             label: "y = 2/x",
             color: CURVE_COLOR,
+            textColor: CURVE_TEXT,
             product: curveY(x) * x,
             ratio: curveY(x) / x,
             frozen: "product",
@@ -358,12 +378,12 @@ function ArithmeticDrawing() {
             {/* Column headers — each one a highlight target with a counterpart
                 overlay in the graph view. */}
             <g {...hoverProps("product")} opacity={dim("product", "line", "curve")} style={EASE_150}>
-                <text x={PRODUCT_CENTER} y="72" textAnchor="middle" fontSize="13" fill={INK} fontWeight={highlight === "product" ? 700 : 600}>
+                <text x={PRODUCT_CENTER} y="72" textAnchor="middle" fontSize="13" fill={CURVE_TEXT} fontWeight={highlight === "product" ? 700 : 600}>
                     x × y
                 </text>
             </g>
             <g {...hoverProps("ratio")} opacity={dim("ratio", "line", "curve")} style={EASE_150}>
-                <text x={RATIO_CENTER} y="72" textAnchor="middle" fontSize="13" fill={INK} fontWeight={highlight === "ratio" ? 700 : 600}>
+                <text x={RATIO_CENTER} y="72" textAnchor="middle" fontSize="13" fill={LINE_TEXT} fontWeight={highlight === "ratio" ? 700 : 600}>
                     y ÷ x
                 </text>
             </g>
@@ -419,14 +439,14 @@ function ArithmeticDrawing() {
                                         y={y}
                                         textAnchor="middle"
                                         fontSize="18"
-                                        fill={isFrozen ? row.color : INK}
+                                        fill={isFrozen ? row.textColor : INK}
                                         fontWeight={isFrozen ? 700 : 500}
                                         style={{ fontVariantNumeric: "tabular-nums" }}
                                     >
                                         {fmt(cell.value)}
                                     </text>
                                     {isFrozen ? (
-                                        <text x={cell.center} y={y + 24} textAnchor="middle" fontSize="10" fill={row.color}>
+                                        <text x={cell.center} y={y + 24} textAnchor="middle" fontSize="10" fill={row.textColor}>
                                             same every time
                                         </text>
                                     ) : (
@@ -480,9 +500,21 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
     <StackLayout key="layout-contrast-two-rules" maxWidth="xl">
         <Block id="contrast-two-rules" padding="sm">
             <EditableParagraph id="para-contrast-two-rules" blockId="contrast-two-rules">
-                Now set the two rules against each other on the same constant, k = 2: the teal line is
-                y = 2x, the indigo curve is y = 2/x. Drag either dot sideways, since both graphs are
-                read at the same x. Then watch which number in each row refuses to move.
+                Now set the two rules against each other on the same{" "}
+                <InlineSpotColor varName="quantityConstant" {...kProps}>constant, k = 2</InlineSpotColor>
+                : the{" "}
+                <InlineSpotColor varName="quantityDirect" {...directProps}>coral line</InlineSpotColor>
+                {" "}is a{" "}
+                <InlineTooltip
+                    id="tooltip-direct-definition"
+                    tooltip="A relationship where both quantities grow together, because y divided by x always lands on the same number."
+                >
+                    direct
+                </InlineTooltip>
+                {" "}rule, y = 2x, and the{" "}
+                <InlineSpotColor varName="quantityConstant" {...kProps}>teal curve</InlineSpotColor>
+                {" "}is an inverse one, y = 2/x. Drag either dot sideways, then watch which number in
+                each row refuses to move.
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -496,11 +528,34 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
         </Block>
     </SplitLayout>,
 
+    <StackLayout key="layout-contrast-tests-formula" maxWidth="xl">
+        <Block id="contrast-tests-formula" padding="lg">
+            <FormulaBlock
+                latex="\clr{direct}{y = 2x} \;\Rightarrow\; \highlight{ratio}{y \div x} = 2 \qquad\qquad \clr{inverse}{y = 2/x} \;\Rightarrow\; \highlight{product}{x \times y} = 2"
+                colorMap={{ direct: COLOR_DIRECT_TEXT, inverse: COLOR_CONSTANT_TEXT }}
+                linkedHighlights={{
+                    ratio: {
+                        varName: "contrastHighlight",
+                        color: COLOR_DIRECT_TEXT,
+                        bgColor: "rgba(244, 168, 154, 0.24)",
+                    },
+                    product: {
+                        varName: "contrastHighlight",
+                        color: COLOR_CONSTANT_TEXT,
+                        bgColor: "rgba(98, 208, 173, 0.22)",
+                    },
+                }}
+            />
+        </Block>
+    </StackLayout>,
+
     <StackLayout key="layout-contrast-real-test" maxWidth="xl">
         <Block id="contrast-real-test" padding="sm">
             <EditableParagraph id="para-contrast-real-test" blockId="contrast-real-test">
                 One climbs, one falls, and that part is easy. The trap is assuming anything falling
-                must be inverse, so the honest test is arithmetic. At x ={" "}
+                must be inverse, so the honest test is arithmetic. At{" "}
+                <InlineSpotColor varName="quantityX" {...xProps}>x</InlineSpotColor>
+                {" "}={" "}
                 <InlineScrubbleNumber
                     varName="contrastX"
                     {...numberPropsFromDefinition(getVariableInfo("contrastX"))}
@@ -522,7 +577,11 @@ export const straightLineOrCurveBlocks: ReactElement[] = [
                 >
                     dividing y by x
                 </InlineLinkedHighlight>
-                {" "}holds still for the line.
+                {" "}holds still for the line. There is one{" "}
+                <InlineTrigger varName="contrastX" value={1} icon="zap">
+                    x where the two agree
+                </InlineTrigger>
+                , and even there the tests tell them apart.
             </EditableParagraph>
         </Block>
     </StackLayout>,
