@@ -1,0 +1,1 @@
+const E="#62D0AD",O="#3EAE8C",c="#8E90F5",T="#6E70DE",C="#8A5FE0",o="#F4A89A",s="#C96A52",R="#D2649F",_=O,t=s,n={x:T,y:C,k:O,direct:s,inverse:O,product:_,ratio:t,answer:R};export{C,n as F,O as a,T as b,E as c,c as d,o as e,s as f};
